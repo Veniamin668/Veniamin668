@@ -2,8 +2,14 @@ name: Get Followers with Names
 
 on:
   schedule:
-    - cron: '*/20 * * * *' # Запуск каждые 20 минут
-  workflow_dispatch: # Кнопка ручного запуска
+    - cron: '*/5 * * * *'
+  
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'README.md'
 
 jobs:
   update-followers:
