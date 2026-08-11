@@ -40,7 +40,7 @@ jobs:
                 const avatar = follower.avatar_url;
                 
                 // Исправлено: теперь адрес формируется как https://github.com
-                htmlTable += `<td align="center"><a href="https://github.com{login}"><img src="${avatar}" width="60px;" alt="${login}"/><br /><sub><b>${login}</b></sub></a></td>`;
+                htmlTable += `<td align="center"><a href="https://github.com/{login}"><img src="${avatar}" width="60px;" alt="${login}"/><br /><sub><b>${login}</b></sub></a></td>`;
                 
                 if ((index + 1) % columns === 0 && index !== followers.length - 1) {
                   htmlTable += "</tr><tr>";
