@@ -12,39 +12,57 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate Followers Table
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # 1. Получаем список подписчиков через GitHub API (первые 30 человек)
-          echo "Fetching followers..."
-          curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://github.com{{ github.repository_owner }}/followers?per_page=30" > followers.json
-
-          # 2. Собираем HTML таблицу
-          HTML_TABLE="<table><tr>"
-          COUNT=0
-          COLUMNS=5 # Количество человек в одной строке таблицы
-
-          # Цикл по каждому подписчику из полученного JSON файла
-          while read -r login avatar_url; do
-            if [ -z "$login" ]; then continue; fi
+      - name: Generate and Update Followers
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
             
-            # Добавляем ячейку с аватаркой и именем
-            HTML_TABLE="$HTML_TABLE<td align='center'><a href='https://github.com'><img src='$avatar_url' width='60px;' alt='$login'/><br /><sub><b>$login</b></sub></a></td>"
-            
-            COUNT=$((COUNT + 1))
-            # Если строка заполнена, переносим на следующую
-            if [ $((COUNT % COLUMNS)) -eq 0 ]; then
-              HTML_TABLE="$HTML_TABLE</tr><tr>"
-            fi
-          done < <(jq -r '.[] | "\(.login) \(.avatar_url)"' followers.json)
+            try {
+              // 1. Запрашиваем список подписчиков через официальный клиент GitHub API
+              console.log("Fetching followers...");
+              const response = await github.rest.users.listFollowersForUser({
+                username: context.repo.owner,
+                per_page: 30
+              });
+              
+              const followers = response.data;
+              if (!followers || followers.length === 0) {
+                console.log("No followers found.");
+                return;
+              }
 
-          HTML_TABLE="$HTML_TABLE</tr></table>"
+              // 2. Строим чистую HTML сетку
+              let htmlTable = "<table><tr>";
+              const columns = 5; // По 5 человек в ряд
+              
+              followers.forEach((follower, index) => {
+                const login = follower.login;
+                const avatar = follower.avatar_url;
+                
+                htmlTable += `<td align="center"><a href="https://github.com{login}"><img src="${avatar}" width="60px;" alt="${login}"/><br /><sub><b>${login}</b></sub></a></td>`;
+                
+                if ((index + 1) % columns === 0 && index !== followers.length - 1) {
+                  htmlTable += "</tr><tr>";
+                }
+              });
+              
+              htmlTable += "</tr></table>";
 
-          # 3. Записываем сгенерированную таблицу внутрь README.md между тегами-маркерами
-          sed -i '/<!-- START_SECTION:followers -->/,/<!-- END_SECTION:followers -->/{//!d}' README.md
-          sed -i '/<!-- START_SECTION:followers -->/a '"$HTML_TABLE"'' README.md
+              // 3. Читаем README.md и заменяем текст между маркерами
+              let readme = fs.readFileSync('README.md', 'utf8');
+              const startMarker = '<!-- START_SECTION:followers -->';
+              const endMarker = '<!-- END_SECTION:followers -->';
+              
+              const regex = new RegExp(`${startMarker}[\\s\\S]*?${endMarker}`);
+              const updatedReadme = readme.replace(regex, `${startMarker}\n${htmlTable}\n${endMarker}`);
+              
+              fs.writeFileSync('README.md', updatedReadme, 'utf8');
+              console.log("README.md successfully updated!");
+              
+            } catch (error) {
+              core.setFailed(`Action failed with error: ${error.message}`);
+            }
 
       - name: Commit and Push Changes
         run: |
@@ -52,6 +70,6 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           git commit -m "Update followers list" || exit 0
-          # Подтягиваем ручные правки, чтобы избежать конфликтов (замените main на master, если нужно)
+          # Подтягиваем ручные изменения и пушим (если у вас ветка master, замените main на master ниже)
           git pull --rebase origin main
           git push origin main
