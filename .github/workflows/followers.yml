@@ -17,14 +17,14 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            
+
             try {
               console.log("Fetching followers...");
               const response = await github.rest.users.listFollowersForUser({
                 username: context.repo.owner,
                 per_page: 30
               });
-              
+
               const followers = response.data;
               if (!followers || followers.length === 0) {
                 console.log("No followers found.");
@@ -34,31 +34,31 @@ jobs:
               // Строим валидную HTML сетку с правильными ссылками
               let htmlTable = "<table><tr>";
               const columns = 5; 
-              
+
               followers.forEach((follower, index) => {
                 const login = follower.login;
                 const avatar = follower.avatar_url;
-                
-                // Исправлено: теперь адрес формируется как https://github.com
-                htmlTable += `<td align="center"><a href="https://github.com/{login}"><img src="${avatar}" width="60px;" alt="${login}"/><br /><sub><b>${login}</b></sub></a></td>`;
-                
+
+                // Исправлено: заменено {login} на `${login}` для корректной интерполяции
+                htmlTable += `<td align="center"><a href="https://github.com/${login}"><img src="${avatar}" width="60px;" alt="${login}"/><br /><sub><b>${login}</b></sub></a></td>`;
+
                 if ((index + 1) % columns === 0 && index !== followers.length - 1) {
                   htmlTable += "</tr><tr>";
                 }
               });
-              
+
               htmlTable += "</tr></table>";
 
               let readme = fs.readFileSync('README.md', 'utf8');
               const startMarker = '<!-- START_SECTION:followers -->';
               const endMarker = '<!-- END_SECTION:followers -->';
-              
+
               const regex = new RegExp(`${startMarker}[\\s\\S]*?${endMarker}`);
               const updatedReadme = readme.replace(regex, `${startMarker}\n${htmlTable}\n${endMarker}`);
-              
+
               fs.writeFileSync('README.md', updatedReadme, 'utf8');
               console.log("README.md successfully updated!");
-              
+
             } catch (error) {
               core.setFailed(`Action failed with error: ${error.message}`);
             }
