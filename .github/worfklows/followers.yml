@@ -1,0 +1,22 @@
+name: Get Followers
+
+on:
+  schedule:
+    # Запуск каждый час (можно настроить любое время по Cron)
+    - cron: '0 * * * *'
+  workflow_dispatch: # Позволяет запускать вручную кнопкой
+
+jobs:
+  update-followers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Update Followers List
+        uses: jamesgeorge007/github-activity-readme@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          COMMIT_MSG: "Update followers list"
+          MAX_LINES: 10
