@@ -2,7 +2,7 @@ name: Get Followers with Names
 
 on:
   schedule:
-    - cron: '*/20 * * * *' # Каждые 20 минут
+    - cron: '*/20 * * * *' # Запуск каждые 20 минут
   workflow_dispatch: # Кнопка ручного запуска
 
 jobs:
@@ -12,24 +12,46 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Update Followers List
-        uses: subhamx/github-followers-badge@v1.0.10
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # Параметры отображения: выводим аватар и имя
-          with_avatar: true
-          with_name: true
-          # Количество человек в одной строке таблицы
-          per_row: 5
-          # Максимальное количество отображаемых людей всего
-          max_followers: 25
+      - name: Generate Followers Table
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. Получаем список подписчиков через GitHub API (первые 30 человек)
+          echo "Fetching followers..."
+          curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://github.com{{ github.repository_owner }}/followers?per_page=30" > followers.json
+
+          # 2. Собираем HTML таблицу
+          HTML_TABLE="<table><tr>"
+          COUNT=0
+          COLUMNS=5 # Количество человек в одной строке таблицы
+
+          # Цикл по каждому подписчику из полученного JSON файла
+          while read -r login avatar_url; do
+            if [ -z "$login" ]; then continue; fi
+            
+            # Добавляем ячейку с аватаркой и именем
+            HTML_TABLE="$HTML_TABLE<td align='center'><a href='https://github.com'><img src='$avatar_url' width='60px;' alt='$login'/><br /><sub><b>$login</b></sub></a></td>"
+            
+            COUNT=$((COUNT + 1))
+            # Если строка заполнена, переносим на следующую
+            if [ $((COUNT % COLUMNS)) -eq 0 ]; then
+              HTML_TABLE="$HTML_TABLE</tr><tr>"
+            fi
+          done < <(jq -r '.[] | "\(.login) \(.avatar_url)"' followers.json)
+
+          HTML_TABLE="$HTML_TABLE</tr></table>"
+
+          # 3. Записываем сгенерированную таблицу внутрь README.md между тегами-маркерами
+          sed -i '/<!-- START_SECTION:followers -->/,/<!-- END_SECTION:followers -->/{//!d}' README.md
+          sed -i '/<!-- START_SECTION:followers -->/a '"$HTML_TABLE"'' README.md
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@://github.com"
-          git add -A
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
           git commit -m "Update followers list" || exit 0
-          # Подтягиваем изменения, чтобы не было конфликтов (замените main на master, если нужно)
+          # Подтягиваем ручные правки, чтобы избежать конфликтов (замените main на master, если нужно)
           git pull --rebase origin main
           git push origin main
