@@ -40,4 +40,7 @@ jobs:
           git config --global user.email "github-actions[bot]@://github.com"
           git add -A
           git commit -m "Update followers list" || exit 0
-          git push
+          # Подтягиваем возможные изменения из вашего профиля, чтобы избежать конфликта
+          git pull --rebase origin main
+          git push origin main
+
