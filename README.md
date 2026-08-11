@@ -1,4 +1,4 @@
 ## Hi there 👋
 
-My followers:
-![GitHub Followers](github-followers.svg)
+<!-- START_SECTION:followers -->
+<!-- END_SECTION:followers -->
