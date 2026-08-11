@@ -2,9 +2,8 @@ name: Get Followers
 
 on:
   schedule:
-    # Запуск каждый час (можно настроить любое время по Cron)
-    - cron: '0 * * * *'
-  workflow_dispatch: # Позволяет запускать вручную кнопкой
+    - cron: '0 * * * *' # Запуск каждый час
+  workflow_dispatch: # Кнопка ручного запуска
 
 jobs:
   update-followers:
@@ -14,9 +13,31 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update Followers List
-        uses: jamesgeorge007/github-activity-readme@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: platane/snk/svg-only@v3
         with:
-          COMMIT_MSG: "Update followers list"
-          MAX_LINES: 10
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+
+      # Используем официальный проверенный инструмент для вывода подписчиков
+      - name: Display Followers
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: ${{ github.repository_owner }}
+          template: classic
+          base: ""
+          plugin_people: yes
+          plugin_people_types: followers
+          plugin_people_limit: 28
+          plugin_people_size: 28
+          filename: github-followers.svg
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@://github.com"
+          git add -A
+          git commit -m "Update followers list" || exit 0
+          git push
