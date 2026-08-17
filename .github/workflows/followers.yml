@@ -2,7 +2,7 @@ name: Get Followers with Names
 
 on:
   schedule:
-    - cron: '*/20 * * * *'
+    - cron: '*/30 * * * *'
   
   workflow_dispatch:
 
