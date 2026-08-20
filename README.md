@@ -5,3 +5,23 @@ My followers:
 <!-- END_SECTION:followers -->
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=6240F7&width=435&lines=Unisuck+engineering" alt="Typing SVG" /></a>
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=0A1BFF&width=435&lines=UNIKAL+T603+is+best!" alt="Typing SVG" /></a>
+
+<p align="center">
+  <img src="https://github-readme-stats-fast.vercel.app/api?username=Veniamin668&theme=bear&show_icons=true&hide_border=true&count_private=true&locale=ru">
+</p>
+
+###
+
+<p align="center">
+  <img src="https://github-profile-trophy-tawny.vercel.app/?username=Veniamin668&theme=radical&no-frame=true&no-bg=true&margin-w=4">
+</p>
+
+###
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Flowseal/Flowseal/refs/heads/output/github-contribution-grid-snake-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Flowseal/Flowseal/refs/heads/output/github-contribution-grid-snake.svg" />
+    <img alt="github-snake" src="https://raw.githubusercontent.com/Flowseal/Flowseal/refs/heads/output/github-contribution-grid-snake.svg" />
+  </picture>
+</p>
