@@ -5,7 +5,7 @@ My followers:
 <!-- END_SECTION:followers -->
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=6240F7&width=435&lines=Unisuck+engineering" alt="Typing SVG" /></a>
 
-<p align="center">
+<p align="left">
   <img src="https://github-readme-stats-fast.vercel.app/api?username=Veniamin668&theme=bear&show_icons=true&hide_border=true&count_private=true&locale=ru">
 </p>
 
