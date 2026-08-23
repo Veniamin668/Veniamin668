@@ -24,3 +24,4 @@ My followers:
     <img alt="github-snake" src="https://raw.githubusercontent.com/Veniamin668/Veniamin668/refs/heads/output/github-contribution-grid-snake.svg" />
   </picture>
 </p>
+www.google.com
