@@ -25,12 +25,6 @@ My followers:
   </picture>
 </p>
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://google.com" />
-    <source media="(prefers-color-scheme: light)" srcset="https://google.com" />
-    <img alt="github-snake" src="https://google.com" />
-  </picture>
-</p>
+
 
 
