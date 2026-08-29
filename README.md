@@ -24,3 +24,12 @@ My followers:
     <img alt="github-snake" src="https://raw.githubusercontent.com/Veniamin668/Veniamin668/refs/heads/output/github-contribution-grid-snake.svg" />
   </picture>
 </p>
+
+## 🏆 GitHub Trophies
+![](https://github-profile-trophy.vercel.app/?username=Veniamin668&theme=shadow_blue&no-frame=false&no-bg=false&margin-w=4)
+
+### ✍️ Random Dev Quote
+![](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=tokyonight)
+
+---
+[![](https://komarev.com/ghpvc/?username=Veniamin668&icon=3)](https://visitcount.itsvg.in)
